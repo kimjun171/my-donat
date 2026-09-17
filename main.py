@@ -227,14 +227,14 @@ genre_counts_series = df["genre"].value_counts()
 top_genres = genre_counts_series[genre_counts_series >= 10].index
 df_filtered = df[df["genre"].isin(top_genres)]
 
-# 2. 박스플롯 생성 (hover_data에 movieNm을 포함하여 마우스 오버 시 영화명 표시)
+# 2. 박스플롯 생성
 fig5 = px.box(
     df_filtered,
     x="genre",
     y="total_audi",
     color="genre",
     hover_data=["movieNm"],
-    points="outliers",  # 이상치(outlier) 점만 표시
+    points="outliers",
     title="영화수 10편 이상 장르별 총 관객수 분포 및 이상치",
     labels={
         "genre": "장르",
@@ -253,7 +253,7 @@ fig5.update_layout(
     xaxis_title="장르 (10편 이상)",
     yaxis_title="총 관객수 (명)",
     height=550,
-    showlegend=False,  # X축에 장르명이 나오므로 범례 숨김
+    showlegend=False,
 )
 
 # 그래프 출력
@@ -268,9 +268,56 @@ st.info(
 st.markdown("---")
 
 # ==========================================
-# [섹션 6] 향후 추가될 그래프 구역
+# [섹션 6] 스크린수 vs 총 관객수 vs 첫 주 관객수 (버블 그래프)
 # ==========================================
-st.header("📌 6. (추가 예정 구역)")
+st.header("📌 6. 스크린수, 총 관객수, 첫 주 관객수의 관계 (버블 그래프)")
+
+# 버블 그래프(Bubble Chart) 생성 (size 속성에 개봉 첫 주 관객수 지정)
+fig6 = px.scatter(
+    df,
+    x="first_scrn",
+    y="total_audi",
+    size="first_week_audi",  # 버블 크기: 개봉 첫 주 관객
+    color="genre",  # 장르별 색상 구별
+    hover_name="movieNm",
+    size_max=45,  # 버블 최대 크기 설정
+    title="개봉일 스크린수 vs 총 관객수 (버블 크기: 개봉 첫 주 관객)",
+    labels={
+        "first_scrn": "개봉일 스크린수 (개)",
+        "total_audi": "총 관객수 (명)",
+        "first_week_audi": "첫 주 관객수 (명)",
+        "genre": "장르",
+    },
+    color_discrete_sequence=px.colors.qualitative.Bold,
+)
+
+# 마우스 오버 툴팁 설정 (첫 주 관객수 추가)
+fig6.update_traces(
+    hovertemplate="<b>%{hovertext}</b><br><b>장르:</b> %{fullData.name}<br><b>개봉일 스크린수:</b> %{x:,}개<br><b>총 관객수:</b> %{y:,}명<br><b>첫 주 관객수:</b> %{marker.size:,}명<extra></extra>"
+)
+
+fig6.update_layout(
+    xaxis_title="개봉일 스크린수 (개)",
+    yaxis_title="총 관객수 (명)",
+    height=550,
+    legend=dict(title_text="장르 (클릭 시 ON/OFF)"),
+)
+
+# 그래프 출력
+st.plotly_chart(fig6, use_container_width=True)
+
+# 💡 '이 그래프로 알 수 있는 것' 문구 작성 구역
+st.info(
+    "💡 **이 그래프로 알 수 있는 것:**\n\n"
+    "(여기에 분석 소감을 작성해 주세요. 예: 개봉일 스크린수가 많을수록 첫 주 관객수(버블 크기)도 매우 크게 시작하며, 첫 주 흥행 성공이 최종 관객수로 직결되는 경향을 명확히 확인할 수 있습니다.)"
+)
+
+st.markdown("---")
+
+# ==========================================
+# [섹션 7] 향후 추가될 그래프 구역
+# ==========================================
+st.header("📌 7. (추가 예정 구역)")
 st.caption(
-    "앞으로 '분포와 관계'에 관한 다양한 그래프(예: 제작 국가별 관객수 분포 등)가 계속 추가될 영역입니다."
+    "앞으로 '분포와 관계'에 관한 다양한 시각화 그래프가 계속 추가될 영역입니다."
 )
