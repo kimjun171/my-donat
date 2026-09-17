@@ -182,8 +182,8 @@ fig4 = px.scatter(
     df,
     x="first_scrn",
     y="total_audi",
-    color="genre",  # 장르별로 점 색상 구별 및 범례 자동 생성
-    hover_name="movieNm",  # 마우스 오버 시 영화명 강조 표시
+    color="genre",
+    hover_name="movieNm",
     title="개봉일 스크린수 vs 총 관객수 상관관계",
     labels={
         "first_scrn": "개봉일 스크린수 (개)",
@@ -193,7 +193,7 @@ fig4 = px.scatter(
     color_discrete_sequence=px.colors.qualitative.Bold,
 )
 
-# 마우스 오버 서식 설정 (영화명, 개봉일 스크린수, 총 관객수, 장르 표시)
+# 마우스 오버 서식 설정
 fig4.update_traces(
     marker=dict(size=9, opacity=0.8),
     hovertemplate="<b>%{hovertext}</b><br><b>장르:</b> %{fullData.name}<br><b>개봉일 스크린수:</b> %{x:,}개<br><b>총 관객수:</b> %{y:,}명<extra></extra>",
@@ -218,9 +218,59 @@ st.info(
 st.markdown("---")
 
 # ==========================================
-# [섹션 5] 향후 추가될 그래프 구역
+# [섹션 5] 주요 장르별 총 관객수 분포 (박스플롯)
 # ==========================================
-st.header("📌 5. (추가 예정 구역)")
+st.header("📌 5. 주요 장르별 총 관객수 분포 (박스플롯)")
+
+# 1. 영화 편수가 10편 이상인 장르만 필터링
+genre_counts_series = df["genre"].value_counts()
+top_genres = genre_counts_series[genre_counts_series >= 10].index
+df_filtered = df[df["genre"].isin(top_genres)]
+
+# 2. 박스플롯 생성 (hover_data에 movieNm을 포함하여 마우스 오버 시 영화명 표시)
+fig5 = px.box(
+    df_filtered,
+    x="genre",
+    y="total_audi",
+    color="genre",
+    hover_data=["movieNm"],
+    points="outliers",  # 이상치(outlier) 점만 표시
+    title="영화수 10편 이상 장르별 총 관객수 분포 및 이상치",
+    labels={
+        "genre": "장르",
+        "total_audi": "총 관객수 (명)",
+        "movieNm": "영화명",
+    },
+    color_discrete_sequence=px.colors.qualitative.Safe,
+)
+
+# 마우스 오버(Hover) 시 이상치 영화명과 총 관객수가 보이도록 설정
+fig5.update_traces(
+    hovertemplate="<b>영화명:</b> %{customdata[0]}<br><b>총 관객수:</b> %{y:,}명<extra></extra>"
+)
+
+fig5.update_layout(
+    xaxis_title="장르 (10편 이상)",
+    yaxis_title="총 관객수 (명)",
+    height=550,
+    showlegend=False,  # X축에 장르명이 나오므로 범례 숨김
+)
+
+# 그래프 출력
+st.plotly_chart(fig5, use_container_width=True)
+
+# 💡 '이 그래프로 알 수 있는 것' 문구 작성 구역
+st.info(
+    "💡 **이 그래프로 알 수 있는 것:**\n\n"
+    "(여기에 분석 소감을 작성해 주세요. 예: 주요 장르 대부분은 중앙값이 낮게 형성되어 있으나, 상자 밖으로 멀리 떨어진 이상치(대흥행작) 영화들이 각 장르의 성과를 이끌고 있음을 알 수 있습니다.)"
+)
+
+st.markdown("---")
+
+# ==========================================
+# [섹션 6] 향후 추가될 그래프 구역
+# ==========================================
+st.header("📌 6. (추가 예정 구역)")
 st.caption(
-    "앞으로 '분포와 관계'에 관한 다양한 그래프(예: 10위권 등재 일수와 총 관객수의 상관관계 등)가 계속 추가될 영역입니다."
+    "앞으로 '분포와 관계'에 관한 다양한 그래프(예: 제작 국가별 관객수 분포 등)가 계속 추가될 영역입니다."
 )
