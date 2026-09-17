@@ -19,7 +19,9 @@ def load_data():
     df = pd.read_csv(url, dtype={"movieCd": str, "openDt": str})
 
     # 1. 장르 처리: 세로막대 기호(|)로 여러 개 적힌 경우 첫 번째 장르만 추출
-    df["genre"] = df["genre"].astype(str).apply(lambda x: x.split("|")[0].strip())
+    df["genre"] = (
+        df["genre"].astype(str).apply(lambda x: x.split("|")[0].strip())
+    )
 
     # 2. 숫자형 데이터 정제
     numeric_cols = [
@@ -58,7 +60,7 @@ st.header("📌 1. 장르별 영화 편수 분포")
 genre_counts = df["genre"].value_counts().reset_index()
 genre_counts.columns = ["장르", "영화수"]
 
-# Plotly 도넛 그래프(Donut Chart) 생성 (hole 속성으로 중앙 공백 형성)
+# Plotly 도넛 그래프(Donut Chart) 생성
 fig1 = px.pie(
     genre_counts,
     names="장르",
@@ -86,15 +88,50 @@ st.plotly_chart(fig1, use_container_width=True)
 # 💡 '이 그래프로 알 수 있는 것' 문구 작성 구역
 st.info(
     "💡 **이 그래프로 알 수 있는 것:**\n\n"
-    "(여기에 분석 소감을 작성해 주세요. 예: 흥행권에 진입한 영화 중 애니메이션과 드라마다 가장 높은 비중을 차지함을 알 수 있습니다.)"
+    "(여기에 분석 소감을 작성해 주세요. 예: 흥행권에 진입한 영화 중 애니메이션과 드라마가 가장 높은 비중을 차지함을 알 수 있습니다.)"
 )
 
 st.markdown("---")
 
 # ==========================================
-# [섹션 2] 향후 추가될 그래프 구역
+# [섹션 2] 장르 및 영화별 총 관객수 (트리맵)
 # ==========================================
-st.header("📌 2. (추가 예정 구역)")
+st.header("📌 2. 장르별 영화 및 총 관객수 규모 (트리맵)")
+
+# 트리맵 계층 구조 설정 (장르 -> 영화명)
+fig2 = px.treemap(
+    df,
+    path=[px.Constant("전체 장르"), "genre", "movieNm"],
+    values="total_audi",
+    title="장르 및 영화별 총 관객수 비중 (칸 크기: 총 관객수)",
+    color="genre",
+    color_discrete_sequence=px.colors.qualitative.Set3,
+)
+
+# 마우스 오버(Hover) 시 영화명(또는 장르명)과 총 관객수 콤마 서식 표시
+fig2.update_traces(
+    hovertemplate="<b>%{label}</b><br><b>총 관객수:</b> %{value:,}명<extra></extra>"
+)
+
+fig2.update_layout(
+    height=600,
+)
+
+# 그래프 출력
+st.plotly_chart(fig2, use_container_width=True)
+
+# 💡 '이 그래프로 알 수 있는 것' 문구 작성 구역
+st.info(
+    "💡 **이 그래프로 알 수 있는 것:**\n\n"
+    "(여기에 분석 소감을 작성해 주세요. 예: 특정 장르 내에서도 소수의 초대형 대작 영화가 전체 장르 관객수의 대부분을 견인하는 모습을 볼 수 있습니다.)"
+)
+
+st.markdown("---")
+
+# ==========================================
+# [섹션 3] 향후 추가될 그래프 구역
+# ==========================================
+st.header("📌 3. (추가 예정 구역)")
 st.caption(
-    "앞으로 '분포와 관계'에 관한 다양한 그래프(예: 스크린 수와 총 관객수의 산점도, 국가별 영화 수 등)가 추가될 영역입니다."
+    "앞으로 '분포와 관계'에 관한 다양한 그래프(예: 스크린 수와 총 관객수의 상관관계 등)가 추가될 영역입니다."
 )
