@@ -139,7 +139,7 @@ fig3 = px.histogram(
     x="total_audi",
     title="영화별 총 관객수 분포",
     labels={"total_audi": "총 관객수 (명)", "count": "영화 수 (편)"},
-    nbins=30,  # 구간(bin) 세분화
+    nbins=30,
 )
 
 # 마우스 오버 툴팁 및 색상 서식
@@ -162,7 +162,7 @@ st.plotly_chart(fig3, use_container_width=True)
 # 2. 가장 관객이 많은 영화 데이터 추출
 top_movie = df.loc[df["total_audi"].idxmax()]
 
-# 💡 '이 그래프로 알 수 있는 것' 문구 작성 구역 (자동 탐지 문구 포함)
+# 💡 '이 그래프로 알 수 있는 것' 문구 작성 구역
 st.info(
     "💡 **이 그래프로 알 수 있는 것:**\n\n"
     f"- **밀집 구간:** 대부분의 영화는 관객수 **50만 명 이하** 구간에 강하게 집중되어 분포하고 있습니다.\n"
@@ -173,9 +173,54 @@ st.info(
 st.markdown("---")
 
 # ==========================================
-# [섹션 4] 향후 추가될 그래프 구역
+# [섹션 4] 개봉일 스크린수 vs 총 관객수 (산점도)
 # ==========================================
-st.header("📌 4. (추가 예정 구역)")
+st.header("📌 4. 개봉일 스크린수와 총 관객수의 관계 (산점도)")
+
+# 산점도(Scatter Plot) 생성
+fig4 = px.scatter(
+    df,
+    x="first_scrn",
+    y="total_audi",
+    color="genre",  # 장르별로 점 색상 구별 및 범례 자동 생성
+    hover_name="movieNm",  # 마우스 오버 시 영화명 강조 표시
+    title="개봉일 스크린수 vs 총 관객수 상관관계",
+    labels={
+        "first_scrn": "개봉일 스크린수 (개)",
+        "total_audi": "총 관객수 (명)",
+        "genre": "장르",
+    },
+    color_discrete_sequence=px.colors.qualitative.Bold,
+)
+
+# 마우스 오버 서식 설정 (영화명, 개봉일 스크린수, 총 관객수, 장르 표시)
+fig4.update_traces(
+    marker=dict(size=9, opacity=0.8),
+    hovertemplate="<b>%{hovertext}</b><br><b>장르:</b> %{fullData.name}<br><b>개봉일 스크린수:</b> %{x:,}개<br><b>총 관객수:</b> %{y:,}명<extra></extra>",
+)
+
+fig4.update_layout(
+    xaxis_title="개봉일 스크린수 (개)",
+    yaxis_title="총 관객수 (명)",
+    height=550,
+    legend=dict(title_text="장르 (클릭 시 ON/OFF)"),
+)
+
+# 그래프 출력
+st.plotly_chart(fig4, use_container_width=True)
+
+# 💡 '이 그래프로 알 수 있는 것' 문구 작성 구역
+st.info(
+    "💡 **이 그래프로 알 수 있는 것:**\n\n"
+    "(여기에 분석 소감을 작성해 주세요. 예: 개봉일 스크린수가 많을수록 총 관객수가 대체로 증가하는 양의 상관관계를 보이지만, 스크린수가 적어도 입소문을 통해 대흥행을 거둔 예외 사례도 관찰할 수 있습니다.)"
+)
+
+st.markdown("---")
+
+# ==========================================
+# [섹션 5] 향후 추가될 그래프 구역
+# ==========================================
+st.header("📌 5. (추가 예정 구역)")
 st.caption(
-    "앞으로 '분포와 관계'에 관한 다양한 그래프(예: 스크린 수와 관객수의 산점도 등)가 추가될 영역입니다."
+    "앞으로 '분포와 관계'에 관한 다양한 그래프(예: 10위권 등재 일수와 총 관객수의 상관관계 등)가 계속 추가될 영역입니다."
 )
