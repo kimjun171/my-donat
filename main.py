@@ -272,15 +272,15 @@ st.markdown("---")
 # ==========================================
 st.header("📌 6. 스크린수, 총 관객수, 첫 주 관객수의 관계 (버블 그래프)")
 
-# 버블 그래프(Bubble Chart) 생성 (size 속성에 개봉 첫 주 관객수 지정)
+# 버블 그래프(Bubble Chart) 생성
 fig6 = px.scatter(
     df,
     x="first_scrn",
     y="total_audi",
-    size="first_week_audi",  # 버블 크기: 개봉 첫 주 관객
-    color="genre",  # 장르별 색상 구별
+    size="first_week_audi",
+    color="genre",
     hover_name="movieNm",
-    size_max=45,  # 버블 최대 크기 설정
+    size_max=45,
     title="개봉일 스크린수 vs 총 관객수 (버블 크기: 개봉 첫 주 관객)",
     labels={
         "first_scrn": "개봉일 스크린수 (개)",
@@ -291,7 +291,7 @@ fig6 = px.scatter(
     color_discrete_sequence=px.colors.qualitative.Bold,
 )
 
-# 마우스 오버 툴팁 설정 (첫 주 관객수 추가)
+# 마우스 오버 툴팁 설정
 fig6.update_traces(
     hovertemplate="<b>%{hovertext}</b><br><b>장르:</b> %{fullData.name}<br><b>개봉일 스크린수:</b> %{x:,}개<br><b>총 관객수:</b> %{y:,}명<br><b>첫 주 관객수:</b> %{marker.size:,}명<extra></extra>"
 )
@@ -315,9 +315,48 @@ st.info(
 st.markdown("---")
 
 # ==========================================
-# [섹션 7] 향후 추가될 그래프 구역
+# [섹션 7] 제작 국가 및 장르 계층 구조 (선버스트 그래프)
 # ==========================================
-st.header("📌 7. (추가 예정 구역)")
+st.header("📌 7. 제작 국가 및 장르별 영화 편수 (선버스트)")
+
+# 제작 국가(nation) -> 장르(genre) 계층 집계 (영화 편수 카운트용 임시 열 생성)
+df_sunburst = df.copy()
+df_sunburst["movie_count"] = 1
+
+# 선버스트(Sunburst) 그래프 생성
+fig7 = px.sunburst(
+    df_sunburst,
+    path=["nation", "genre"],
+    values="movie_count",
+    title="제작 국가별 장르 구성 (칸 크기: 영화 편수)",
+    color="nation",
+    color_discrete_sequence=px.colors.qualitative.Pastel,
+)
+
+# 마우스 오버(Hover) 시 국가/장르명, 영화 편수, 비중 표시
+fig7.update_traces(
+    hovertemplate="<b>%{label}</b><br><b>영화 수:</b> %{value}편<br><b>비율:</b> %{percentParent:.1%} (상위 항목 대비)<extra></extra>"
+)
+
+fig7.update_layout(
+    height=600,
+)
+
+# 그래프 출력
+st.plotly_chart(fig7, use_container_width=True)
+
+# 💡 '이 그래프로 알 수 있는 것' 문구 작성 구역
+st.info(
+    "💡 **이 그래프로 알 수 있는 것:**\n\n"
+    "(여기에 분석 소감을 작성해 주세요. 예: 제작 국가별로 주력 생산하는 장르의 편수 차이를 명확히 비교해볼 수 있습니다.)"
+)
+
+st.markdown("---")
+
+# ==========================================
+# [섹션 8] 향후 추가될 그래프 구역
+# ==========================================
+st.header("📌 8. (추가 예정 구역)")
 st.caption(
     "앞으로 '분포와 관계'에 관한 다양한 시각화 그래프가 계속 추가될 영역입니다."
 )
