@@ -295,9 +295,9 @@ st.info(
 st.markdown("---")
 
 # ==========================================
-# [섹션 7] 제작 국가 및 장르 계층 구조 (선버스트 그래프)
+# [섹션 7] 영화 제작 국가별 주력 장르 구성 비율 (선버스트 그래프)
 # ==========================================
-st.header("📌 7. 제작 국가 및 장르별 영화 편수 (선버스트)")
+st.header("📌 7. 영화 제작 국가별로 주로 제작하는 장르 구성 비율은 어떻게 다른가요?")
 
 df_sunburst = df.copy()
 df_sunburst["nation"] = (
@@ -310,7 +310,7 @@ fig7 = px.sunburst(
     df_sunburst,
     path=["nation", "genre"],
     values="movie_count",
-    title="제작 국가별 장르 구성 (칸 크기: 영화 편수)",
+    title="제작 국가별 주요 장르 구성 비율 (칸 크기: 영화 편수)",
     color="nation",
     color_discrete_sequence=px.colors.qualitative.Pastel,
 )
@@ -327,7 +327,7 @@ st.plotly_chart(fig7, use_container_width=True)
 
 st.info(
     "💡 **이 그래프로 알 수 있는 것:**\n\n"
-    "(여기에 분석 소감을 작성해 주세요. 예: 제작 국가별로 주력 생산하는 장르의 편수 차이를 명확히 비교해볼 수 있습니다.)"
+    "(여기에 분석 소감을 작성해 주세요. 예: 한국은 드라마다 액션, 미국은 애니메이션과 액션 등 국가별로 주로 개봉하는 주력 장르 구성 비율에 뚜렷한 차이가 있음을 비교해볼 수 있습니다.)"
 )
 
 st.markdown("---")
