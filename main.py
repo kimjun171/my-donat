@@ -18,8 +18,7 @@ def load_data():
     # CSV 로드 (개봉일과 영화코드는 문자열로 변환)
     df = pd.read_csv(url, dtype={"movieCd": str, "openDt": str})
 
-    # 1. 장르 처리 (에러 수정 지점)
-    # .apply() 및 lambda 사용 대신 판다스 내장 문자열 전용 메서드(.str)를 연결하여 안전하게 처리합니다.
+    # 1. 장르 처리 (.apply() 에러 방지용 문자열 전용 메서드 사용)
     df["genre"] = (
         df["genre"]
         .fillna("")
@@ -325,8 +324,12 @@ st.markdown("---")
 # ==========================================
 st.header("📌 7. 제작 국가 및 장르별 영화 편수 (선버스트)")
 
-# 제작 국가(nation) -> 장르(genre) 계층 집계
+# 제작 국가(nation) -> 장르(genre) 계층 집계 (결측치 정제 처리 추가)
 df_sunburst = df.copy()
+df_sunburst["nation"] = (
+    df_sunburst["nation"].fillna("기타").replace("", "기타")
+)
+df_sunburst["genre"] = df_sunburst["genre"].fillna("기타").replace("", "기타")
 df_sunburst["movie_count"] = 1
 
 # 선버스트(Sunburst) 그래프 생성
